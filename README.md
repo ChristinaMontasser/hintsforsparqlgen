@@ -1,6 +1,6 @@
-# SPARQL Chain
+# Hints for SPARQL Gen
 
-SPARQL Chain generates SPARQL queries from natural-language questions using configurable LLM backends and ontology/schema context. It supports Hydra batch experiments and a FastAPI endpoint.
+Hints for SPARQL Gen generates SPARQL queries from natural-language questions using configurable LLM backends and ontology/schema context. It supports Hydra batch experiments and a FastAPI endpoint.
 
 ## Project Layout
 
