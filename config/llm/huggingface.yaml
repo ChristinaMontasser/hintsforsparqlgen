@@ -1,0 +1,7 @@
+llm: src.llm_backends.SAIABackend
+model_name: Qwen/Qwen3.5-397B-A17B
+base_url: https://router.huggingface.co/v1
+api_key: ${oc.env:HF_TOKEN,}
+temperature: 0.0
+max_tokens: 16384
+enable_thinking: false

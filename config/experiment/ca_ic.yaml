@@ -1,0 +1,16 @@
+# defaults:
+#   - 
+# reasoning_path: not base get override based on the graph 
+
+experiment_name: ca_ic
+description: Graph-structure hint plus reasoning-path hint, the reasoning path prompt is set to the graph-specific configuration, which has extra hints. 
+
+schema:
+  mode: reasoning_path
+
+use_reasoning_path_hint: true
+
+prompt_hints:
+  - general_constraints
+  - reasoning_path_general_constraints
+  - prefix_declaration

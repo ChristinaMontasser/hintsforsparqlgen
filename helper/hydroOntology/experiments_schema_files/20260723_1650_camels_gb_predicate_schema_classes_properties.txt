@@ -1,0 +1,103 @@
+prefixes
+@prefix hyobs: https://w3id.org/hmontology/
+@prefix hydrorwth: https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/
+@prefix linkml: https://w3id.org/linkml/
+@prefix envthes: http://vocabs.lter-europe.net/EnvThes/
+@prefix sosa: http://www.w3.org/ns/sosa/
+@prefix rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+@prefix rdfs: http://www.w3.org/2000/01/rdf-schema#
+@prefix geo: http://www.opengis.net/ont/geosparql#
+@prefix sf: http://www.opengis.net/ont/sf#
+@prefix qudt: http://qudt.org/schema/qudt/
+@prefix unit: http://qudt.org/vocab/unit/
+@prefix xsd: http://www.w3.org/2001/XMLSchema#
+@prefix schema: http://schema.org/
+@prefix dct: http://purl.org/dc/terms/
+@prefix dbo: http://dbpedia.org/ontology/
+@prefix esco: http://data.europa.eu/esco/model#
+@prefix chebi: http://purl.obolibrary.org/obo/CHEBI_
+@prefix virtrdf: http://www.openlinksw.com/schemas/virtrdf# 
+@prefix wgs84_pos: http://www.w3.org/2003/01/geo/wgs84_pos#
+@prefix oboe: http://ecoinformatics.org/oboe/oboe.1.2/oboe-core.owl#
+class
+http://www.opengis.net/ont/sf#Polygon
+http://www.w3.org/ns/sosa/Observation
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/RootDepth
+http://vocabs.lter-europe.net/EnvThes/30212
+https://qudt.org/schema/qudt/QuantityValue
+http://www.w3.org/ns/sosa/Sensor
+http://www.opengis.net/ont/sf#Point
+http://vocabs.lter-europe.net/EnvThes/24
+http://qudt.org/schema/qudt/QuantityValue
+properties
+http://www.opengis.net/ont/geosparql#asWKT
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasHighPrecFrequncy
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasHighPrecipitationSeason
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasLowPrecFrequency
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasLowFlowDuration
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasLowFlowFrequency
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasZeroFlowFraction
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasCropCoverFraction
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasInlandWaterCoverFraction
+https://qudt.org/schema/qudt/unit
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/meanDailyDischarge
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasLowFlowQuantile5
+https://w3id.org/hmontology/medianElevation
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasLowPrecipitationDuration
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/monitorsCatchment
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/precipitationSeasonality
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasHighFlowDuration
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasOrganicFraction
+http://www.opengis.net/ont/geosparql#hasGeometry
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasBaseflowIndexCEH
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasEvergreenWoodlandFraction
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasGrassCoverFraction
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/depthToBedrock
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasSiltFraction
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasSoil
+http://www.w3.org/ns/sosa/hasFeatureOfInterest
+http://www.w3.org/ns/sosa/madeBySensor
+http://www.w3.org/2003/01/geo/wgs84_pos#alt
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasAridityIndex
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasHighPrecipitationDuration
+https://qudt.org/schema/qudt/numericValue
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasFlowDurationCurveSlope
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasRootdepth
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasSoilTexture
+https://w3id.org/hmontology/minElevation
+http://qudt.org/schema/qudt/numericValue
+http://www.w3.org/ns/sosa/resultTime
+https://w3id.org/hmontology/hasCatchmentArea
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasHighFlowFrequency
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasHighFlowQuantile95
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasRunoffRatio
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasShrubCoverFraction
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasSandFraction
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/saturatedHydraulicConductivityPTF_SiltClayOM
+https://w3id.org/hmontology/elevation90thPercentile
+http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasSnowFraction
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasTotalAvailableWaterContent
+https://qudt.org/schema/qudt/quantityValue
+http://www.w3.org/ns/sosa/observedProperty
+https://w3id.org/hmontology/monitorsCatchment
+https://w3id.org/hmontology/crs
+http://www.w3.org/ns/sosa/memberOf
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasMeanDailyPrecip
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasBareSoilAndRockFraction
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasUrbanCoverFraction
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/bulkDensity
+https://w3id.org/hmontology/meanElevation
+https://w3id.org/hmontology/meanSlope
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasMeanHalfFlowDate
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasClayFraction
+https://w3id.org/hmontology/elevation10thPercentile
+http://qudt.org/schema/qudt/unit
+http://schema.org/name
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasMeanEvapotranspiration
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasBaseflowIndexLadson
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasStreamflowElasticity
+https://hydro-knowledge-graph-f48785.pages.rwth-aachen.de/hasDeciduousWoodlandFraction
+https://w3id.org/hmontology/maxElevation
+http://www.w3.org/ns/sosa/hasResult
+http://purl.org/dc/terms/identifier

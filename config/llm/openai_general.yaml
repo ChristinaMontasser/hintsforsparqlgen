@@ -1,0 +1,5 @@
+llm: src.llm_backends.OpenAIBackend
+model_name: gpt-5.5
+
+temperature: 0.0
+api_key: ${oc.env:OPENAI_API_KEY,}

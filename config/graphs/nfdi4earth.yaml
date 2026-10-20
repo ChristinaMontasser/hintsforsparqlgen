@@ -1,0 +1,15 @@
+defaults:
+  - override /reasoning_path_prompt@_global_: nfdi4earth
+
+graph:
+  name: nfdi4earth
+  graph_uri: nfdi4earth
+  validator_api: https://sparql.knowledgehub.nfdi4earth.de
+
+  questions_path: "helper/hydroOntology/question_set/20260727_question_set/10_03_2026_extracted_question_nfdi4earth.csv"
+
+  full_schema_path: "helper/hydroOntology/experiments_schema_files/nfdi4earth_schema_full.txt" 
+  small_schema_path: "helper/hydroOntology/experiments_schema_files/nfdi4earth_classes_properties.txt"
+  lexicon_schema_path:
+  ontology_path:
+  schema_paths_path: "helper/hydroOntology/experiments_schema_files/nfdi4earth_schema_full.txt" 

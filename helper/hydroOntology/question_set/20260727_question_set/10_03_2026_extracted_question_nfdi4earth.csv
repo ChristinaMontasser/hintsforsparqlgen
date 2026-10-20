@@ -1,0 +1,757 @@
+ID;Question ;Hand-Written Question;Query;;;obtained_at
+;Query all services which are run by an organization which is part of NFDI4Earth;Query all services which are run by an organization which is part of NFDI4Earth;"# Query all services which are run by an organization which is part of NFDI4Earth
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?serviceName ?type (GROUP_CONCAT(?NFDI4EarthPublisher;separator="";"") AS ?publishers)
+# GROUP_CONCAT is required to prevent multiple result rows due to organizations having names in multiple languages
+WHERE {
+  ?nfdi4earthProject schema:url  ""https://nfdi4earth.de/""^^xsd:anyURI .
+  ?organizationIRI org:hasMembership ?membership .
+  ?membership org:organization ?nfdi4earthProject .
+  {
+    ?organizationIRI schema:name ?NFDI4EarthPublisher .
+    ?resource dct:publisher ?organizationIRI .
+  } UNION {
+    ?nfdi4earthProject schema:url  ""https://nfdi4earth.de/""^^xsd:anyURI .
+    # In the KH, sometimes also the suborganization of a direct NFDI4Earth member organization
+    # is responsible for a service, therefore we need this additional UNION statement
+    ?subOrg org:subOrganizationOf ?organizationIRI .
+    ?subOrg schema:name ?NFDI4EarthPublisher .
+    FILTER NOT EXISTS {
+      ?resource dct:publisher ?anyPublisher .
+      ?anyPublisher org:hasMembership ?membership2 .
+      ?membership2 org:organization ?nfdi4earthProject
+    }
+    ?resource a ?type .
+    VALUES ?type {n4e:Repository n4e:Aggregator}
+    ?resource dct:publisher ?subOrg .
+  }
+  ?resource dct:title ?serviceName .
+  ?resource a ?type .
+  VALUES ?type {n4e:Repository n4e:Aggregator}
+} GROUP BY ?serviceName ?type";;;2026_01_20_11_20
+;All information on entities of type LearningResource in the Knowledge Hub;All information on entities of type LearningResource in the Knowledge Hub;"# All information on entities of type LearningResource in the Knowledge Hub
+
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX schema: <http://schema.org/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+CONSTRUCT {
+  ?resource ?predicate ?object .
+  ?object ?otherPredicate ?otherObject  .
+}
+WHERE {
+  ?resource a schema:LearningResource .
+  ?resource ?predicate ?object .
+  OPTIONAL {
+    ?resource schema:publisher ?object .
+    BIND(foaf:name as ?otherPredicate) .
+    ?object ?otherPredicate ?otherObject
+  }
+  OPTIONAL {
+    ?resource schema:about ?object .
+    BIND(dct:title as ?otherPredicate) .
+    ?object dct:title ?object2
+  }
+  OPTIONAL {
+    ?resource schema:license ?object .
+    BIND(<http://spdx.org/rdf/terms#licenseId>  as ?otherPredicate) .
+      ?object ?otherPredicate ?otherObject
+  }
+  OPTIONAL {
+    ?resource <https://nfdi.fiz-karlsruhe.de/ontology/subjectArea> ?object .
+    BIND(rdfs:label as ?otherPredicate) .
+    ?object rdfs:label ?otherObject
+  }
+}
+";;;2026_01_20_11_21
+;MetadataStandards and APIs supported by repositories;MetadataStandards and APIs supported by repositories;"# MetadataStandards and APIs supported by repositories
+
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT ?repositoryName ?standardName ?apiType
+WHERE {
+  ?standard a n4e:MetadataStandard .
+  ?standard dct:title ?standardName .
+  ?repo a n4e:Repository .
+  ?repo dct:title ?repositoryName .
+  ?repo n4e:supportsMetadataStandard ?standard .
+  ?repo n4e:hasAPI ?api .
+  ?api dct:conformsTo ?apiType
+}
+";;;2026_01_20_11_22
+;All types of entities in the Knowledge Graph, in alphabetical order;What are the types of entities available in the knowledge graph?;"# All types of entities in the Knowledge Graph, in alphabetical order
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT DISTINCT ?object
+WHERE {
+  ?subject rdf:type ?object.
+}
+ORDER BY (?object)";;queries/questions/TY001.rq;2026_01_20_11_23
+;All entities of type (NFDI4Earth) Aggregator (along with their title);What are all entities of type Aggregator?;"# All entities of type (NFDI4Earth) Aggregator (along with their title)
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+
+SELECT *
+WHERE {
+  ?subject rdf:type n4e:Aggregator;
+  		   dct:title ?title.
+}";;queries/questions/AG001.rq;2026_01_20_11_24
+;All entities that have a location, along with their names;What are entity that have a location and their names?;"# All entities of type (NFDI4Earth) Aggregator (along with their geometry)
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX schema: <http://schema.org/>
+
+SELECT DISTINCT ?name STR(?wkt) AS ?geometryAsWKT
+WHERE {
+  ?subject geo:hasGeometry ?geometry;
+           schema:name ?name.
+
+  ?geometry geo:asWKT ?wkt
+  FILTER(LANG(?name) = """") # Filter names with no language tag
+}
+ORDER BY ?subject";PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX dct: <http://purl.org/dc/terms/title> PREFIX geo: <http://www.opengis.net/ont/geosparql#> SELECT ?name ?geometry WHERE { ?entity rdf:type/rdfs:subClassOf* <http://www.w3.org/2004/02/skos/core#Aggregator>. ?entity dct:title ?name. ?entity geo:hasGeometry ?geometry. };queries/questions/AG001_2.rq;2026_01_20_11_25
+;All attributes available for the type Aggregator;"What are all attributes available for the type ""Aggregator""?";"# All attributes available for the type Aggregator
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT DISTINCT ?predicate
+WHERE {
+  ?entity rdf:type n4e:Aggregator;
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/AG002_1.rq;2026_01_20_11_26
+;Number of attributes available for the type Aggregator;"How many attributes are available for the type ""Aggregator""?";"# Number of attributes available for the type Aggregator
+# This tells us how many unary-attribute questions we can ask about the entity
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT (COUNT (DISTINCT ?predicate) as ?count )
+WHERE {
+  ?entity rdf:type n4e:Aggregator;
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/AG002_2.rq;2026_01_20_11_27
+;All types of schema:Article along with their names;What are all entities of type schema:Article?;"
+PREFIX schema: <http://schema.org/>
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT *
+WHERE {
+  {?subject rdf:type schema:LHBArticle ;
+  			schema:name ?articleName}
+
+ UNION { ?subject rdf:type n4e:Publication;
+  			schema:name ?articleName}
+ }";;queries/questions/AT001.rq;2026_01_20_11_28
+;All entities of type (dcat) Dataset (along with their title);What are all entities of type dcat:Dataset?;"# All entities of type (dcat) Dataset (along with their title)
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+
+SELECT *
+WHERE {
+  ?subject rdf:type dcat:Dataset;
+  		   dct:title ?title.
+}";;queries/questions/DA001.rq;2026_01_20_11_29
+;All attributes available for the type Dataset;"What are all attributes available for the type ""dcat:Dataset""?";"# All attributes available for the type Dataset
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT DISTINCT ?predicate
+WHERE {
+  ?entity rdf:type dcat:Dataset;
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/DA002_1.rq;2026_01_20_11_30
+;All attributes available for the type Dataset;"How many attributes are available for the type ""dcat:Dataset""?";"# All attributes available for the type Dataset
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT (COUNT (DISTINCT ?predicate) as ?count )
+WHERE {
+  ?entity rdf:type dcat:Dataset;
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/DA002_2.rq;2026_01_20_11_31
+;Query for all datasets, that have 'world settlement footprint' in title or description;What are the datasets having the string 'world settlement footprint' in title or description?;"# Query for all datasets, that have 'world settlement footprint' in title or description
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sc: <http://schema.org/>
+
+SELECT ?s ?value ?license ?resourceUrl
+WHERE {
+    ?s rdf:type dcat:Dataset.
+    {
+        ?s dct:title ?value.
+    }
+    UNION
+    {
+        ?s dct:description ?value.
+    }
+    ?s sc:license ?license .
+    ?s dcat:landingPage ?resourceUrl.
+    FILTER (CONTAINS(LCASE(STR(?value)), ""world settlement footprint""))
+}";;queries/questions/DA003_1.rq;2026_01_20_11_32
+;All entities of type (NFDI4Earth) LHBArticle (along with their name and audience);What are all entities of type LHBArticle?;"# All entities of type (NFDI4Earth) LHBArticle (along with their name and audience)
+
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX schema: <http://schema.org/>
+
+SELECT *
+WHERE {
+  ?subject rdf:type n4e:LHBArticle;
+   			schema:name ?name; 
+      		schema:audience ?audience.
+}";;queries/questions/LH001.rq;2026_01_20_11_33
+;All attributes available for the type LHBArticle;"What are all attributes available for the type ""LHBArticle""?";"# All attributes available for the type LHBArticle
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT DISTINCT ?predicate
+WHERE {
+  ?entity rdf:type n4e:LHBArticle;
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/LH002_1.rq;2026_01_20_11_34
+;Number of attributes available for the type LHBArticle;"How many attributes are available for the type ""LHBArticle""?";"# Number of attributes available for the type LHBArticle
+# This tells us how many unary-attribute questions we can ask about the entity
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT (COUNT (DISTINCT ?predicate) as ?count )
+WHERE {
+  ?entity rdf:type n4e:LHBArticle;
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/LH002_2.rq;2026_01_20_11_35
+;All entities of type (schema) LearningResource (along with the learning type, if available);What are all entities of type LearningResource?;"# All entities of type (schema) LearningResource (along with the learning type, if available)
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX schema: <http://schema.org/>
+
+SELECT *
+WHERE {
+  ?subject rdf:type schema:LearningResource; 
+           schema:name ?name.
+           OPTIONAL{ ?subject schema:educationLevel ?educLevel}
+         OPTIONAL{?subject schema:learningResourceType ?learningType}
+}";;queries/questions/LR001.rq;2026_01_20_11_36
+;All attributes available for the type LearningResource;"What are all attributes available for the type ""LearningResource""?";"# All attributes available for the type LearningResource
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT DISTINCT ?predicate
+WHERE {
+  ?entity rdf:type schema:LearningResource; 
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/LR002_1.rq;2026_01_20_11_37
+;Number of attributes available for the type LearningResource;"How many attributes are available for the type ""LearningResource""?";"# Number of attributes available for the type LearningResource
+# This tells us how many unary-attribute questions we can ask about the entity
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT (COUNT (DISTINCT ?predicate) as ?count )
+WHERE {
+  ?entity rdf:type schema:LearningResource; 
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/LR002_2.rq;2026_01_20_11_38
+;All entities of type (NFDI4Earth) MetadataStandard (along with their title and description);What are all entities of type MetadataStandard?;"# All entities of type (NFDI4Earth) MetadataStandard (along with their title and description)
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT *
+WHERE {
+  ?subject rdf:type n4e:MetadataStandard ;
+  		   dct:title ?title; 
+       	   schema:description ?description
+}";;queries/questions/MS001.rq;2026_01_20_11_39
+;All attributes available for the type MetadataStandard;"What are all attributes available for the type ""MetadataStandard""?";"# All attributes available for the type MetadataStandard
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT DISTINCT ?predicate
+WHERE {
+  ?entity rdf:type n4e:MetadataStandard;
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/MS002_1.rq;2026_01_20_11_40
+;Number of attributes available for the type MetadataStandard;"How many attributes are available for the type ""MetadataStandard""?";"# Number of attributes available for the type MetadataStandard
+# This tells us how many unary-attribute questions we can ask about the entity
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT (COUNT (DISTINCT ?predicate) as ?count )
+WHERE {
+  ?entity rdf:type n4e:MetadataStandard;
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/MS002_2.rq;2026_01_20_11_41
+;All organizations in the NFDI4Earth Knowledge Graph, along with their names and URLs, if available;What are all entities of type Organization?;"# All organizations in the NFDI4Earth Knowledge Graph, along with their names and URLs, if available
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX schema: <http://schema.org/>
+
+SELECT *
+WHERE {
+  ?entity a foaf:Organization;
+          schema:name ?name .
+  OPTIONAL {?entity foaf:homepage ?homepage.}
+}";;queries/questions/OG001.rq;2026_01_20_11_42
+;All attributes available for the type Organization;"What are all attributes available for the type ""Organization""?";"# All attributes available for the type Organization
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT DISTINCT ?predicate
+WHERE {
+  ?entity rdf:type foaf:Organization;
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/OG002_1.rq;2026_01_20_11_43
+;Number of attributes available for the type Organization;"How many attributes are available for the type ""Organization""?";"# Number of attributes available for the type Organization
+# This tells us how many unary-attribute questions we can ask about the entity
+
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT (COUNT (DISTINCT ?predicate) as ?count )
+
+WHERE {
+  ?entity rdf:type foaf:Organization;
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/OG002_2.rq;2026_01_20_11_44
+;All entities of type (schema) Person (along with their names and affiliations, if available);What are all entities of type Person?;"# All entities of type (schema) Person (along with their names and affiliations, if available)
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX schema: <http://schema.org/>
+
+SELECT ?name ?affil ?entity
+WHERE {
+  ?entity rdf:type schema:Person;
+           schema:name ?name .
+           OPTIONAL{?entity schema:affiliation ?affil}
+}";;queries/questions/PE001.rq;2026_01_20_11_45
+;All attributes available for the type Person;"What are all attributes available for the type ""Person""?";"# All attributes available for the type Person
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT DISTINCT ?predicate
+WHERE {
+  ?entity rdf:type schema:Person; 
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/PE002_1.rq;2026_01_20_11_46
+;Number of attributes available for the type Person;"How many attributes are available for the type ""Person""?";"# Number of attributes available for the type Person
+# This tells us how many unary-attribute questions we can ask about the entity
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT (COUNT (DISTINCT ?predicate) as ?count )
+WHERE {
+  ?entity rdf:type schema:Person; 
+  		   ?predicate ?object
+    FILTER(?predicate != rdf:type)
+
+} ";;queries/questions/PE002_2.rq;2026_01_20_11_47
+;All types of n4e:Publication along with their names;What are all entities of type Publication?;"# All types of n4e:Publication along with their names
+
+PREFIX schema: <http://schema.org/>
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT *
+WHERE {
+  ?subject rdf:type n4e:Publication;
+  			schema:name ?publicationName
+}";;queries/questions/PU001.rq;2026_01_20_11_48
+;All attributes available for the type Publication;"What are all attributes available for the type ""n4e:Publication""?";"# All attributes available for the type Publication
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+
+SELECT DISTINCT ?predicate
+WHERE {
+  ?entity rdf:type n4e:Publication;
+          ?predicate ?attributeInformation.
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/PU002_1.rq;2026_01_20_11_49
+;Number of attributes available for the type Publication;"How many attributes are available for the type ""n4e:Publication""?";"# Number of attributes available for the type Publication
+# This tells us how many unary-attribute questions we can ask about the entity
+
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+
+SELECT (COUNT (DISTINCT ?predicate) as ?count )
+WHERE {
+  ?entity rdf:type n4e:Publication;
+          ?predicate ?attributeInformation.
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/PU002_2.rq;2026_01_20_11_50
+;All entities of type (NFDI4Earth) Registry, along with their title;What are all entities of type Registry?;"# All entities of type (NFDI4Earth) Registry, along with their title 
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+
+SELECT *
+WHERE {
+  ?subject rdf:type n4e:Registry ;
+  		     dct:title ?title.
+}";;queries/questions/REG001.rq;2026_01_20_11_51
+;All attributes available for the type Registry;"What are all attributes available for the type ""Registry""?";"# All attributes available for the type Registry
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT DISTINCT ?predicate
+WHERE {
+  ?entity rdf:type n4e:Registry;
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/REG002_1.rq;2026_01_20_11_52
+;Number of attributes available for the type Registry;"How many attributes are available for the type ""Registry""?";"# Number of attributes available for the type Registry
+# This tells us how many unary-attribute questions we can ask about the entity
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT (COUNT (DISTINCT ?predicate) as ?count )
+WHERE {
+  ?entity rdf:type n4e:Registry;
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/REG002_2.rq;2026_01_20_11_53
+;All entities of type (NFDI4Earth) Repository, along with their title;What are all entities of type Repository?;"# All entities of type (NFDI4Earth) Repository, along with their title
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+
+SELECT *
+WHERE {
+  ?subject rdf:type n4e:Repository ;
+  		     dct:title ?title.
+}";;queries/questions/REP001.rq;2026_01_20_11_54
+;All attributes available for the type Repository;"What are all attributes available for the type ""Repository""?";"# All attributes available for the type Repository
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+SELECT DISTINCT ?predicate
+WHERE {
+  ?entity rdf:type n4e:Repository;
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/REP002_1.rq;2026_01_20_11_55
+;Number of attributes available for the type ResearchProject;"How many attributes are available for the type ""Repository""?";"# Number of attributes available for the type ResearchProject
+# This tells us how many unary-attribute questions we can ask about the entity
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+
+
+SELECT (COUNT (DISTINCT ?predicate) as ?count )
+WHERE {
+  ?entity rdf:type n4e:Repository;
+  		   ?predicate ?object
+    FILTER(?predicate != rdf:type)
+
+} ";;queries/questions/REP002_2.rq;2026_01_20_11_56
+;All entities of type (schema) ResearchProject (along with their names);What are all entities of type ResearchProject?;"# All entities of type (schema) ResearchProject (along with their names)
+
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX schema: <http://schema.org/>
+
+SELECT *
+WHERE {
+  ?entity rdf:type schema:ResearchProject; 
+		  schema:name ?name.
+}";;queries/questions/RP001.rq;2026_01_20_11_57
+;All attributes available for the type ResearchProject;"What are all attributes available for the type ""ResearchProject""?";"# All attributes available for the type ResearchProject
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+
+SELECT DISTINCT ?predicate
+WHERE {
+  ?entity rdf:type schema:ResearchProject;
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/RP002_1.rq;2026_01_20_11_58
+;Number of attributes available for the type ResearchProject;"How many attributes are available for the type ""ResearchProject""?";"# Number of attributes available for the type ResearchProject
+# This tells us how many unary-attribute questions we can ask about the entity
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+
+SELECT (COUNT (DISTINCT ?predicate) as ?count )
+WHERE {
+  ?entity rdf:type schema:ResearchProject;
+  		   ?predicate ?object
+    FILTER(?predicate != rdf:type)
+
+} ";;queries/questions/RP002_2.rq;2026_01_20_11_59
+;All entities of type (schema) Software (along with their names and URL);What are all entities of type Software?;"# All entities of type (schema) Software (along with their names and URL)
+
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX schema: <http://schema.org/>
+
+SELECT *
+WHERE {
+  ?entity rdf:type n4e:Software; 
+		  schema:name ?name;
+    	  schema:codeRepository ?codeUrl.
+}
+";;queries/questions/SC001.rq;2026_01_20_11_60
+;All attributes available for the type Software;"What are all attributes available for the type ""Software""?";"# All attributes available for the type Software
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+
+SELECT DISTINCT ?predicate
+WHERE {
+  ?entity rdf:type n4e:Software;
+          ?predicate ?attributeInformation.  
+      FILTER(?predicate != rdf:type)
+}";;queries/questions/SC002_1.rq;2026_01_20_11_61
+;Number of attributes available for the type Software;"How many attributes are available for the type ""Software""?";"# Number of attributes available for the type Software
+# This tells us how many unary-attribute questions we can ask about the entity
+PREFIX n4e: <http://nfdi4earth.de/ontology/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX m4i: <http://w3id.org/nfdi4ing/metadata4ing#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX schema: <http://schema.org/>
+
+SELECT (COUNT (DISTINCT ?predicate) as ?count )
+WHERE {
+  ?subject rdf:type n4e:Software;
+  		   ?predicate ?object
+    FILTER(?predicate != rdf:type)
+
+}";;queries/questions/SC002_2.rq;2026_01_20_11_62

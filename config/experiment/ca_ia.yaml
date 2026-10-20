@@ -1,0 +1,18 @@
+# defaults:
+#   - base
+
+experiment_name: ca_ia
+description: Graph-structure hint plus CoT-style instruction, only the prompt. 
+
+schema:
+  mode: full
+
+use_reasoning_path_hint: false
+
+#TODO: the prompt hints to be used for this experiment are not yet finalized. The following is a placeholder.
+prompt_hints:
+  - general_constraints
+  - schema_general_constraints
+  - prefix_declaration
+  - CoT_instruction
+

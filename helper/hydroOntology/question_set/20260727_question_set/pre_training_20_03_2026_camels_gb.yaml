@@ -1,0 +1,593 @@
+- messages:
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "Where is gauging station “Water of Dye at Charr” located?"
+    - role: assistant
+      content: |
+        PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+        PREFIX schema: <http://schema.org/>
+        PREFIX sosa: <http://www.w3.org/ns/sosa/>
+        PREFIX wgs84_pos: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+
+        SELECT ?name ?wkt ?lon ?lat ?elevation
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> {
+            ?sensor a sosa:Sensor ;
+                    schema:name ?name ;
+                    geo:hasGeometry ?geom .
+
+            FILTER(lcase(str(?name)) = "water of dye at charr")
+
+            ?geom geo:asWKT ?wkt .
+            OPTIONAL { ?geom wgs84_pos:alt ?elevation }
+
+            BIND(bif:st_x(?wkt) AS ?lon)
+            BIND(bif:st_y(?wkt) AS ?lat)
+          }
+        }
+
+- messages:
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "What are the gauging station locations of the five largest catchments by area? "
+    - role: assistant
+      content: |
+        PREFIX hyobs: <https://w3id.org/hmontology/>
+        PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+        PREFIX sosa: <http://www.w3.org/ns/sosa/>
+        PREFIX schema: <http://schema.org/>
+        PREFIX qudt: <http://qudt.org/schema/qudt/>
+        PREFIX wgs84_pos: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+        PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+        SELECT ?sensor ?stationName ?catchment ?area ?wkt ?lon ?lat ?elevation
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> {
+            ?sensor a sosa:Sensor ;
+                    hyobs:monitorsCatchment ?catchment ;
+                    geo:hasGeometry ?geom .
+
+            ?catchment hyobs:hasCatchmentArea ?areaNode .
+            ?areaNode qudt:numericValue ?area .
+
+            OPTIONAL { ?sensor schema:name ?stationName }
+
+            ?geom geo:asWKT ?wkt .
+            OPTIONAL { ?geom wgs84_pos:alt ?elevation }
+
+            BIND(bif:st_x(?wkt) AS ?lon)
+            BIND(bif:st_y(?wkt) AS ?lat)
+          }
+        }
+        ORDER BY DESC(xsd:decimal(?area))
+        LIMIT 5
+
+- messages:
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "What is the boundary of the catchment monitored by sensor 3003?"
+    - role: assistant
+      content: |
+        PREFIX hyobs: <https://w3id.org/hmontology/>
+        PREFIX geo:  <http://www.opengis.net/ont/geosparql#>
+        PREFIX sosa: <http://www.w3.org/ns/sosa/>
+        PREFIX dct:  <http://purl.org/dc/terms/>
+
+        SELECT ?catchment ?wkt1 
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> {
+            ?sensor a sosa:Sensor ;
+                    dct:identifier ?sensorId ;
+                    hyobs:monitorsCatchment ?catchment .
+            FILTER(str(?sensorId) = "3003")
+
+            ?catchment geo:hasGeometry ?g1 .
+            ?g1 geo:asWKT ?wkt1 .
+
+          }
+        }
+
+- messages:
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "Which catchments share a boundary with the catchment that recorded the highest total precipitation between 2012 and 2015? "
+    - role: assistant
+      content: |
+        PREFIX hyobs: <https://w3id.org/hmontology/>
+        PREFIX geo:  <http://www.opengis.net/ont/geosparql#>
+        PREFIX sosa: <http://www.w3.org/ns/sosa/>
+        PREFIX qudt: <http://qudt.org/schema/qudt/>
+        PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+        PREFIX envthes: <http://vocabs.lter-europe.net/EnvThes/>
+
+        SELECT ?topCatchment ?topTotalPrecip ?neighborCatchment
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> {
+            {
+              SELECT ?topCatchment (SUM(xsd:decimal(?precVal)) AS ?topTotalPrecip)
+              WHERE {
+                ?sensor a sosa:Sensor ;
+                        hyobs:monitorsCatchment ?topCatchment .
+
+                ?obs a sosa:Observation ;
+                    sosa:observedProperty envthes:30106 ;
+                    sosa:madeBySensor ?sensor ;
+                    sosa:resultTime ?t ;
+                    sosa:hasResult ?res .
+
+                ?res qudt:numericValue ?precVal .
+
+                FILTER(?t >= "2012-01-01"^^xsd:date &&
+                      ?t <  "2016-01-01"^^xsd:date)
+              }
+              GROUP BY ?topCatchment
+              ORDER BY DESC(?topTotalPrecip)
+              LIMIT 1
+            }
+
+            ?topCatchment geo:hasGeometry ?g1 .
+            ?g1 geo:asWKT ?wkt1 .
+
+            ?neighborCatchment a envthes:30212.
+            ?neighborCatchment geo:hasGeometry ?g2 .
+            ?g2 geo:asWKT ?neighborWkt .
+
+            FILTER(?neighborCatchment != ?topCatchment)
+            FILTER(bif:st_intersects(?wkt1, ?neighborWkt, 0))
+          }
+        }
+
+- messages:
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "What is the area of the largest catchment in the dataset? "
+    - role: assistant
+      content: |
+        PREFIX hyobs: <https://w3id.org/hmontology/>
+        PREFIX qudt:  <http://qudt.org/schema/qudt/>
+        PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
+        PREFIX envthes: <http://vocabs.lter-europe.net/EnvThes/>
+
+        SELECT ?catchment ?area
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> {
+            ?catchment a envthes:30212.
+            ?catchment hyobs:hasCatchmentArea ?areaNode .
+            ?areaNode qudt:numericValue ?area .
+          }
+        }
+        ORDER BY DESC(xsd:decimal(?area))
+        LIMIT 1
+
+- messages:
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "What are the areas of all catchments in the dataset?"
+    - role: assistant
+      content: |
+        PREFIX hyobs: <https://w3id.org/hmontology/>
+        PREFIX qudt:  <http://qudt.org/schema/qudt/>
+        PREFIX envthes: <http://vocabs.lter-europe.net/EnvThes/>
+
+        SELECT ?catchment ?area
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> {
+            ?catchment a envthes:30212.
+            ?catchment hyobs:hasCatchmentArea ?areaNode .
+            ?areaNode qudt:numericValue ?area .
+          }
+        }
+
+- messages:
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "What is the distance between the gauging stations with the highest and lowest elevations in the dataset? "
+    - role: assistant
+      content: |
+        PREFIX geo:  <http://www.opengis.net/ont/geosparql#>
+        PREFIX sosa: <http://www.w3.org/ns/sosa/>
+        PREFIX wgs84_pos: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+        PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+
+        SELECT ?highestSensor ?highestEle ?lowestSensor ?lowestEle ?distance
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> {
+            {
+              SELECT ?highestSensor ?highestEle ?wktHigh
+              WHERE {
+                ?highestSensor a sosa:Sensor ;
+                              geo:hasGeometry ?gHigh .
+                ?gHigh wgs84_pos:alt ?highestEle ;
+                      geo:asWKT ?wktHigh .
+              }
+              ORDER BY DESC(xsd:decimal(?highestEle))
+              LIMIT 1
+            }
+
+            {
+              SELECT ?lowestSensor ?lowestEle ?wktLow
+              WHERE {
+                ?lowestSensor a sosa:Sensor ;
+                              geo:hasGeometry ?gLow .
+                ?gLow wgs84_pos:alt ?lowestEle ;
+                      geo:asWKT ?wktLow .
+              }
+              ORDER BY xsd:decimal(?lowestEle)
+              LIMIT 1
+            }
+
+            BIND(bif:st_distance(?wktHigh, ?wktLow) AS ?distance)
+          }
+        }
+
+- messages:
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "What are the gauging stations within a 50 km radius of the Gauging Station nr. 1001?"
+    - role: assistant
+      content: |
+        PREFIX geo:  <http://www.opengis.net/ont/geosparql#>
+        PREFIX sosa: <http://www.w3.org/ns/sosa/>
+        PREFIX dct:  <http://purl.org/dc/terms/>
+        PREFIX schema: <http://schema.org/>
+
+        SELECT ?neighborSensor ?neighborName ?distance
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> {
+            ?refSensor a sosa:Sensor ;
+                      dct:identifier ?refId ;
+                      geo:hasGeometry ?refGeom .
+            FILTER(str(?refId) = "1001")
+
+            ?refGeom geo:asWKT ?refWkt .
+
+            ?neighborSensor a sosa:Sensor ;
+                            geo:hasGeometry ?neighborGeom .
+            ?neighborGeom geo:asWKT ?neighborWkt .
+
+            OPTIONAL { ?neighborSensor schema:name ?neighborName }
+
+            FILTER(?neighborSensor != ?refSensor)
+
+            BIND(bif:st_distance(?refWkt, ?neighborWkt) AS ?distance)
+            FILTER(?distance <= 50)
+          }
+        }
+        ORDER BY ?distance
+
+- messages:
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "What is the name of the station with the ID 12005?"
+    - role: assistant
+      content: |
+        PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+        PREFIX schema: <http://schema.org/>
+        PREFIX dct:  <http://purl.org/dc/terms/>
+
+        SELECT ?stationName ?stationId
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> {
+            ?sensor a sosa:Sensor ;
+                   dct:identifier ?stationId;
+        		   schema:name ?stationName.
+            FILTER(str(?stationId) = "12005")
+
+          }
+        }
+
+- messages:
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "Which catchment recorded the highest mean precipitation in 2015?"
+    - role: assistant
+      content: |
+        PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+        PREFIX envthes:<http://vocabs.lter-europe.net/EnvThes/>
+        PREFIX qudt:   <http://qudt.org/schema/qudt/>
+        PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#>
+
+        SELECT ?catchment ?meanPrecip
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> {
+            {
+              SELECT ?catchment (AVG(xsd:decimal(?val)) AS ?meanPrecip)
+              WHERE {
+                ?obs a sosa:Observation ;
+                    sosa:observedProperty envthes:30106 ;
+                    sosa:hasFeatureOfInterest ?catchment ;
+                    sosa:resultTime ?t ;
+                    sosa:hasResult ?res .
+                ?res qudt:numericValue ?val .
+
+                FILTER(?t >= "2015-01-01"^^xsd:date &&
+                      ?t <  "2016-01-01"^^xsd:date)
+              }
+              GROUP BY ?catchment
+              ORDER BY DESC(?meanPrecip)
+              LIMIT 1
+            }
+          }
+        }
+
+- messages:
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "Which catchments recorded annual precipitation > 1000 mm in Great Britain in 2000?"
+    - role: assistant
+      content: |
+        PREFIX sosa:    <http://www.w3.org/ns/sosa/>
+        PREFIX envthes: <http://vocabs.lter-europe.net/EnvThes/>
+        PREFIX qudt:    <http://qudt.org/schema/qudt/>
+        PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
+
+        SELECT ?catchment ?annualPrecip
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> {
+            {
+              SELECT ?catchment (SUM(xsd:decimal(?val)) AS ?annualPrecip)
+              WHERE {
+                ?obs a sosa:Observation ;
+                    sosa:observedProperty envthes:30106 ;
+                    sosa:hasFeatureOfInterest ?catchment ;
+                    sosa:resultTime ?t ;
+                    sosa:hasResult ?res .
+
+                ?res qudt:numericValue ?val .
+
+                FILTER(?t >= "2000-01-01"^^xsd:date &&
+                      ?t <  "2001-01-01"^^xsd:date)
+              }
+              GROUP BY ?catchment
+            }
+
+            FILTER(?annualPrecip > 1000)
+          }
+        }
+        ORDER BY DESC(?annualPrecip)
+
+- messages:
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "What are the mean slope and mean elevation of catchments with an area greater than 50km?"
+    - role: assistant
+      content: |
+        PREFIX hyobs: <https://w3id.org/hmontology/>
+        PREFIX qudt:  <http://qudt.org/schema/qudt/>
+        PREFIX envthes: <http://vocabs.lter-europe.net/EnvThes/>
+
+        SELECT ?catchment ?meanSlope ?elevation ?area
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> {
+            ?catchment a envthes:30212;
+                hyobs:meanSlope ?meanSlope;
+          hyobs:meanElevation ?elevationbNode;
+                  hyobs:hasCatchmentArea ?areaNode .
+              
+              ?areaNode qudt:numericValue ?area .
+              ?elevationbNode qudt:numericValue ?elevation .
+              
+              FILTER (xsd:decimal(?area) > 50)
+            }
+        }
+- messages: 
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "What are the minimum and maximum precipitation observed at the Gauging Station 'wick at tarroul'? "
+    - role: assistant
+      content: |
+        PREFIX sosa:    <http://www.w3.org/ns/sosa/>
+        PREFIX envthes: <http://vocabs.lter-europe.net/EnvThes/>
+        PREFIX qudt:    <http://qudt.org/schema/qudt/>
+        PREFIX schema:  <http://schema.org/>
+        PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
+
+        SELECT (MIN(xsd:decimal(?val)) AS ?minFlow) (MAX(xsd:decimal(?val)) AS ?maxFlow)
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> 
+          {
+                ?obs a sosa:Observation ;
+                    sosa:observedProperty envthes:30106 ;
+                    sosa:madeBySensor ?sensor ;
+                    sosa:hasResult ?res .
+                ?res qudt:numericValue ?val .
+                ?sensor a sosa:Sensor ;
+                    schema:name ?stationName .
+                FILTER(lcase(str(?stationName)) = "wick at tarroul")
+              }
+            }
+        
+- messages:
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "What are the minimum and maximum precipitation across all gauging stations? "
+    - role: assistant
+      content: |
+        PREFIX sosa:    <http://www.w3.org/ns/sosa/>
+        PREFIX envthes: <http://vocabs.lter-europe.net/EnvThes/>
+        PREFIX qudt:    <http://qudt.org/schema/qudt/>
+        PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
+
+        SELECT ?minPrecipitation ?maxPrecipitation
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> {
+            {
+              SELECT
+                (MIN(xsd:decimal(?val)) AS ?minPrecipitation)
+                (MAX(xsd:decimal(?val)) AS ?maxPrecipitation)
+              WHERE {
+                ?obs a sosa:Observation ;
+                    sosa:observedProperty envthes:30106 ;
+                    sosa:hasResult ?res .
+                ?res qudt:numericValue ?val .
+              }
+            }
+          }
+        }
+
+- messages:
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "What is the average annual precipitation in Catchment 1001 during the period from 2002 to 2005? "
+    - role: assistant
+      content: |
+        PREFIX sosa:    <http://www.w3.org/ns/sosa/>
+        PREFIX envthes: <http://vocabs.lter-europe.net/EnvThes/>
+        PREFIX qudt:    <http://qudt.org/schema/qudt/>
+        PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
+        PREFIX hyobs:   <https://w3id.org/hmontology/>
+
+        SELECT ?catchment (AVG(?annualTotal) AS ?avgAnnualPrecip)
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> {
+            {
+              SELECT ?catchment ?year (SUM(xsd:decimal(?val)) AS ?annualTotal)
+              WHERE {
+                ?obs a sosa:Observation ;
+                    sosa:observedProperty envthes:30106 ;
+                    sosa:hasFeatureOfInterest ?catchment ;
+                    sosa:resultTime ?t ;
+                    sosa:hasResult ?res .
+
+                ?res qudt:numericValue ?val .
+
+                FILTER(?catchment = hyobs:catchment_1001)
+                BIND(YEAR(?t) AS ?year)
+                FILTER(?year >= 2002 && ?year <= 2005)
+              }
+              GROUP BY ?catchment ?year
+            }
+          }
+        }
+        GROUP BY ?catchment
+
+- messages:
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "Which month experienced the highest mean monthly precipitation rate in Great Britain in 2002?"
+    - role: assistant
+      content: |
+        PREFIX sosa:    <http://www.w3.org/ns/sosa/>
+        PREFIX envthes: <http://vocabs.lter-europe.net/EnvThes/>
+        PREFIX qudt:    <http://qudt.org/schema/qudt/>
+        PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
+
+        SELECT ?month ?meanMonthlyFlow
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> {
+            {
+              SELECT ?month (AVG(xsd:decimal(?val)) AS ?meanMonthlyFlow)
+              WHERE {
+                ?obs a sosa:Observation ;
+                    sosa:observedProperty envthes:30106;
+                    sosa:resultTime ?t ;
+                    sosa:hasResult ?res .
+
+                ?res qudt:numericValue ?val .
+
+                BIND(YEAR(?t) AS ?year)
+                FILTER(?year = 2002)
+
+                BIND(MONTH(?t) AS ?month)
+              }
+              GROUP BY ?month
+              ORDER BY DESC(?meanMonthlyFlow)
+              LIMIT 1
+            }
+          }
+        }
+
+- messages:
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "Which years experienced average annual precipitation below 1200 mm/year in Great Britain? "
+    - role: assistant
+      content: |
+        PREFIX sosa:    <http://www.w3.org/ns/sosa/>
+        PREFIX envthes: <http://vocabs.lter-europe.net/EnvThes/>
+        PREFIX qudt:    <http://qudt.org/schema/qudt/>
+        PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
+
+        SELECT ?year ?avgAnnualPrecip
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> {
+            {
+              # for a given year, take the average over all catchments 
+              SELECT ?year (AVG(?annualTotal) AS ?avgAnnualPrecip)
+              WHERE {
+                {
+                 # take annual total per catchment
+                  SELECT ?year ?catchment (SUM(xsd:decimal(?val)) AS ?annualTotal)
+                  WHERE {
+                    ?obs a sosa:Observation ;
+                        sosa:observedProperty envthes:30106 ;
+                        sosa:hasFeatureOfInterest ?catchment ;
+                        sosa:resultTime ?t ;
+                        sosa:hasResult ?res .
+
+                    ?res qudt:numericValue ?val .
+                    BIND(YEAR(?t) AS ?year)
+                  }
+                  GROUP BY ?year ?catchment
+                }
+              }
+              GROUP BY ?year
+            }
+
+            FILTER(?avgAnnualPrecip < 1200)
+          }
+        }
+        ORDER BY ?year
+
+- messages:
+    - role: system
+      content: "Convert natural language questions into SPARQL queries for Virtuoso."
+    - role: user
+      content: "How many frost days were recorded at the “brora at bruachrobie” station between 2000 and 2010? (Frost days are defined as days with temperatures below 0°C) "
+    - role: assistant
+      content: |
+        PREFIX sosa:    <http://www.w3.org/ns/sosa/>
+        PREFIX schema:  <http://schema.org/>
+        PREFIX envthes: <http://vocabs.lter-europe.net/EnvThes/>
+        PREFIX qudt:    <http://qudt.org/schema/qudt/>
+        PREFIX xsd:     <http://www.w3.org/2001/XMLSchema#>
+
+        SELECT (COUNT(DISTINCT ?day) AS ?frostDays)
+        WHERE {
+          GRAPH <hydroturtle/camels_gb> {
+            ?sensor a sosa:Sensor ;
+                    schema:name ?stationName .
+            FILTER(lcase(str(?stationName)) = "brora at bruachrobie")
+
+            ?obs a sosa:Observation ;
+                sosa:observedProperty envthes:21524 ;
+                sosa:madeBySensor ?sensor ;
+                sosa:resultTime ?t ;
+                sosa:hasResult ?res .
+
+            ?res qudt:numericValue ?tempVal .
+
+            FILTER(xsd:decimal(?tempVal) < 0)
+            FILTER(?t >= "2000-01-01"^^xsd:date &&
+                  ?t <  "2010-01-01"^^xsd:date)
+
+            BIND(xsd:date(?t) AS ?day)
+          }
+        }

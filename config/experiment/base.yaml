@@ -1,0 +1,15 @@
+# defaults:
+#   - base
+
+experiment_name: Default experiment
+description: Default experiment
+
+
+schema:
+  mode: small
+
+use_reasoning_path_hint: false
+
+prompt_hints: 
+  - general_constraints
+  - schema_general_constraints

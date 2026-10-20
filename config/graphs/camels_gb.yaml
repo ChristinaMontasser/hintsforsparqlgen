@@ -1,0 +1,15 @@
+defaults:
+   - override /reasoning_path_prompt@_global_: camels_gb
+
+graph:
+  name: camels_gb
+  graph_uri: hydroturtle/camels_gb
+  validator_api: https://obs.knowledgehub.nfdi4earth.de/sparql/
+
+  questions_path: "helper/hydroOntology/question_set/20260727_question_set/28_07_2026_questions_queries_camels_gb.csv"
+
+  full_schema_path: "helper/hydroOntology/experiments_schema_files/20260723_1650_camels_gb_predicate_schema_full.txt" 
+  small_schema_path: "helper/hydroOntology/experiments_schema_files/20260723_1650_camels_gb_predicate_schema_classes_properties.txt"
+  lexicon_schema_path:
+  ontology_path:
+  schema_paths_path: "helper/hydroOntology/experiments_schema_files/20260723_1650_camels_gb_predicate_schema_full.txt" 

@@ -1,0 +1,197 @@
+prefixes
+@prefix hyobs: https://w3id.org/hmontology/
+@prefix linkml: https://w3id.org/linkml/
+@prefix envthes: http://vocabs.lter-europe.net/EnvThes/
+@prefix sosa: http://www.w3.org/ns/sosa/
+@prefix rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+@prefix rdfs: http://www.w3.org/2000/01/rdf-schema#
+@prefix geo: http://www.opengis.net/ont/geosparql#
+@prefix sf: http://www.opengis.net/ont/sf#
+@prefix qudt: http://qudt.org/schema/qudt/
+@prefix unit: http://qudt.org/vocab/unit/
+@prefix xsd: http://www.w3.org/2001/XMLSchema#
+@prefix schema: http://schema.org/
+@prefix dct: http://purl.org/dc/terms/
+@prefix dbo: http://dbpedia.org/ontology/
+@prefix esco: http://data.europa.eu/esco/model#
+@prefix chebi: http://purl.obolibrary.org/obo/CHEBI_
+@prefix virtrdf: http://www.openlinksw.com/schemas/virtrdf# 
+@prefix wgs84_pos: http://www.w3.org/2003/01/geo/wgs84_pos#
+@prefix oboe: http://ecoinformatics.org/oboe/oboe.1.2/oboe-core.owl#
+class
+http://www.opengis.net/ont/sf#Polygon
+http://www.w3.org/ns/sosa/Observation
+http://vocabs.lter-europe.net/EnvThes/30212
+http://www.w3.org/ns/sosa/Sensor
+http://www.opengis.net/ont/sf#Point
+http://qudt.org/schema/qudt/QuantityValue
+properties
+http://www.opengis.net/ont/geosparql#asWKT
+https://w3id.org/hmontology/fractionArtif
+https://w3id.org/hmontology/fractionClayAgri
+https://w3id.org/hmontology/fractionPartConsol
+https://w3id.org/hmontology/fractionPastures
+https://w3id.org/hmontology/fractionUrban2018
+https://w3id.org/hmontology/nitrogenTotalYieldPerKm2PerYear
+https://w3id.org/hmontology/nitrogenTotalYieldYEW
+https://w3id.org/hmontology/phosphorusOutputPerHa
+https://w3id.org/hmontology/phosphorusSurplus
+https://w3id.org/hmontology/precipitationAnnualMm
+https://w3id.org/hmontology/qEndDate
+https://w3id.org/hmontology/qMissingCount
+https://w3id.org/hmontology/slopeMean
+https://w3id.org/hmontology/aridityIndex
+https://w3id.org/hmontology/fractionClay
+https://w3id.org/hmontology/fractionGwsoils
+https://w3id.org/hmontology/fractionMine2018
+https://w3id.org/hmontology/fractionNPointWwtp2010
+https://w3id.org/hmontology/fractionScrub2018
+https://w3id.org/hmontology/fractionSilt
+https://w3id.org/hmontology/fractionUrbanVeg
+https://w3id.org/hmontology/fractionWater2018
+https://w3id.org/hmontology/leafAreaIndexM12
+https://w3id.org/hmontology/nPointWwtp2010
+https://w3id.org/hmontology/objectId
+https://w3id.org/hmontology/phosphorusAvailableAgricultural
+https://w3id.org/hmontology/phosphorusInput
+https://w3id.org/hmontology/qSummerToWinterRatio
+https://w3id.org/hmontology/fractionCalc
+https://w3id.org/hmontology/fractionIce
+https://w3id.org/hmontology/fractionMagma
+https://w3id.org/hmontology/fractionNPointPopulation1991
+https://w3id.org/hmontology/fractionNPointPopulation2010
+https://w3id.org/hmontology/fractionNPointWwtp1991
+https://w3id.org/hmontology/fractionUrban
+https://w3id.org/hmontology/leafAreaIndexM02
+https://w3id.org/hmontology/leafAreaIndexM04
+https://w3id.org/hmontology/leafAreaIndexM08
+https://w3id.org/hmontology/nSurplusBatool2010
+https://w3id.org/hmontology/pPointWwtp1991
+https://w3id.org/hmontology/phosphorusChemicalFertilizer
+https://w3id.org/hmontology/qMedian
+https://w3id.org/hmontology/rootZoneAvailableWater
+https://w3id.org/hmontology/soilPhH2O
+https://w3id.org/hmontology/medianElevation
+https://w3id.org/hmontology/flashinessIndex
+https://w3id.org/hmontology/fractionAreaInGermany
+https://w3id.org/hmontology/fractionWetl2018
+https://w3id.org/hmontology/nPointPopulation1991
+https://w3id.org/hmontology/pSurplusBatool2010
+https://w3id.org/hmontology/precipSeasonalityIndexSw
+https://w3id.org/hmontology/uwwtpCount
+http://www.opengis.net/ont/geosparql#hasGeometry
+https://w3id.org/hmontology/fractionAgric
+https://w3id.org/hmontology/fractionArtif2018
+https://w3id.org/hmontology/fractionSilic
+https://w3id.org/hmontology/leafAreaIndexM05
+https://w3id.org/hmontology/leafAreaIndexM11
+https://w3id.org/hmontology/nPointWwtp1991
+https://w3id.org/hmontology/pPointWwtp2010
+https://w3id.org/hmontology/phosphorusAvailable
+https://w3id.org/hmontology/phosphorusTotalYieldPerKm2PerYear
+https://w3id.org/hmontology/populationDensityPerKm2
+https://w3id.org/hmontology/soilThetaS
+https://w3id.org/hmontology/twiMedian
+http://www.w3.org/ns/sosa/hasFeatureOfInterest
+http://www.w3.org/ns/sosa/madeBySensor
+https://w3id.org/hmontology/baseflowIndex
+https://w3id.org/hmontology/fractionAgriHetero
+https://w3id.org/hmontology/fractionAgriPerm
+https://w3id.org/hmontology/fractionConsol
+https://w3id.org/hmontology/fractionFissured
+https://w3id.org/hmontology/fractionInwater
+https://w3id.org/hmontology/fractionMetam
+https://w3id.org/hmontology/fractionWetl
+https://w3id.org/hmontology/leafAreaIndexM06
+https://w3id.org/hmontology/leafAreaIndexM10
+https://w3id.org/hmontology/nSurplusBatool1991
+https://w3id.org/hmontology/nSurplusHaussermann2010
+https://w3id.org/hmontology/phosphorusRemovalPerHa
+https://w3id.org/hmontology/phosphorusTotalYieldYEW
+https://w3id.org/hmontology/qSpecificDischarge
+https://w3id.org/hmontology/soilCarbonNitrogenRatioMean
+https://w3id.org/hmontology/twiP90
+http://qudt.org/schema/qudt/numericValue
+http://www.w3.org/ns/sosa/resultTime
+https://w3id.org/hmontology/hasCatchmentArea
+https://w3id.org/hmontology/hasAnalyte
+https://w3id.org/hmontology/ddhad
+https://w3id.org/hmontology/fractionFores2018
+https://w3id.org/hmontology/fractionHard
+https://w3id.org/hmontology/fractionOpen2018
+https://w3id.org/hmontology/fractionPorous
+https://w3id.org/hmontology/fractionUnconsol
+https://w3id.org/hmontology/fractionWater
+https://w3id.org/hmontology/leafAreaIndexM07
+https://w3id.org/hmontology/phosphorusTotal
+https://w3id.org/hmontology/phosphorusTotalAgricultural
+https://w3id.org/hmontology/qMedianSummer
+http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+https://w3id.org/hmontology/riverName
+http://www.w3.org/ns/sosa/usedProcedure
+https://w3id.org/hmontology/airTemperatureMeanAnnual
+https://w3id.org/hmontology/ewCount
+https://w3id.org/hmontology/fractionAgric2018
+https://w3id.org/hmontology/fractionArable
+https://w3id.org/hmontology/fractionFiss2
+https://w3id.org/hmontology/fractionMine
+https://w3id.org/hmontology/fractionPastures2018
+https://w3id.org/hmontology/nSurplusHaussermann1991
+https://w3id.org/hmontology/pPointPopulation2010
+https://w3id.org/hmontology/phosphorusUptakePerHa
+https://w3id.org/hmontology/qGapsFraction
+https://w3id.org/hmontology/qMean
+http://www.w3.org/ns/sosa/observedProperty
+https://w3id.org/hmontology/monitorsCatchment
+https://w3id.org/hmontology/crs
+http://www.w3.org/ns/sosa/memberOf
+https://w3id.org/hmontology/fractionAgriPerm2018
+https://w3id.org/hmontology/fractionFiss1
+https://w3id.org/hmontology/fractionIndustry2018
+https://w3id.org/hmontology/fractionOpen
+https://w3id.org/hmontology/fractionPorous1
+https://w3id.org/hmontology/leafAreaIndexM01
+https://w3id.org/hmontology/leafAreaIndexM03
+https://w3id.org/hmontology/manurePerHa
+https://w3id.org/hmontology/pPointPopulation1991
+https://w3id.org/hmontology/qStartDate
+https://w3id.org/hmontology/soilPhCaCl
+https://w3id.org/hmontology/meanElevation
+https://w3id.org/hmontology/bodTotalYieldPerKm2PerYear
+https://w3id.org/hmontology/drainageDensity
+https://w3id.org/hmontology/fertilizerPerHa
+https://w3id.org/hmontology/fractionArable2018
+https://w3id.org/hmontology/fractionIndustry
+https://w3id.org/hmontology/fractionPorous2
+https://w3id.org/hmontology/fractionScrub
+https://w3id.org/hmontology/fractionSiliSed
+https://w3id.org/hmontology/fractionUrbanVeg2018
+https://w3id.org/hmontology/nPointPopulation2010
+https://w3id.org/hmontology/pSurplusBatool1991
+https://w3id.org/hmontology/petAnnualMm
+https://w3id.org/hmontology/phosphorusAtmosphericDeposition
+https://w3id.org/hmontology/precipSeasonalityIndex
+https://w3id.org/hmontology/strahlerOrder
+https://w3id.org/hmontology/twiMean
+http://qudt.org/schema/qudt/unit
+http://schema.org/name
+https://w3id.org/hmontology/hasCatchmentAreaKm2
+https://w3id.org/hmontology/fractionAgriHetero2018
+https://w3id.org/hmontology/fractionCalcSed
+https://w3id.org/hmontology/fractionFores
+https://w3id.org/hmontology/fractionForest
+https://w3id.org/hmontology/fractionForest2018
+https://w3id.org/hmontology/fractionHard1
+https://w3id.org/hmontology/fractionHard2
+https://w3id.org/hmontology/fractionSand
+https://w3id.org/hmontology/fractionSedim
+https://w3id.org/hmontology/leafAreaIndexM09
+https://w3id.org/hmontology/precipAlpha
+https://w3id.org/hmontology/precipLambda
+https://w3id.org/hmontology/qCoefficientOfVariation
+https://w3id.org/hmontology/qMedianWinter
+https://w3id.org/hmontology/slopeMedian
+https://w3id.org/hmontology/soilNitrogenMean
+https://w3id.org/hmontology/soilPhosphorusMean
+http://www.w3.org/ns/sosa/hasResult
+http://purl.org/dc/terms/identifier

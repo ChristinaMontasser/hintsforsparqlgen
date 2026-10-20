@@ -1,0 +1,20 @@
+
+experiment_name: ca_cb_ia_ic
+description: Graph-structure hint plus CoT, reasoning-path, and scenario-specific hints.
+
+schema:
+  mode: reasoning_path
+
+
+use_reasoning_path_hint: true
+
+prompt_hints:
+  - general_constraints
+  - prefix_declaration
+  - reasoning_path_general_constraints
+  - CoT_instruction
+  - query_constraint
+  - aggregation_principles
+  - other_functions
+  - measurement_units
+  - graph_constraints

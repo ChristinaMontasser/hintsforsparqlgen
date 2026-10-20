@@ -1,0 +1,31 @@
+
+# dependencies:
+#   - python=3.11.9
+#   - pip
+- python -m spacy download en_core_web_sm
+- pip:
+      - hydra-core>=1.3
+      - omegaconf>=2.3
+      - requests>=2.31
+      - python-dotenv>=1.0
+      - ruamel.yaml>=0.17
+      - langchain-core>=0.1.15
+      - langchain-community>=0.0.30
+      - langchain-openai>=0.1.0
+      - openai>=1.10.0
+      - cohere
+      - google-genai
+      - sentencepiece
+      - protobuf>=4.23.3
+      - transformers>=4.35.0
+      - torch>=2.1.0
+      # Uncomment if you want them
+      # - torchvision>=0.16.0
+      # - torchaudio>=2.1.0
+      - accelerate>=0.23.0
+      - matplotlib
+      - seaborn
+      - statsmodels>=0.14.6
+      - linkml-runtime
+      - RapidFuzz==0.1.0
+      - spacy

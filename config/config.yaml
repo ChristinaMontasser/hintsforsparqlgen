@@ -1,0 +1,113 @@
+###############################TO BE CONFIGURED###################################
+defaults:
+  - reasoning_path_prompt@_global_: base # DO NOT CHANGE THIS LINE. It is used to set the default reasoning path prompt for all experiments.
+  - graphs@_global_: nfdi4earth
+  - _self_
+  - experiment@_global_: base
+  - llm@llm: saia
+  - llm@evaluation_llm: scads
+  - llm@ner_llm: saia
+  - llm@reasoning_path_llm: saia
+  - llm@schema_path_llm: saia
+  - prompt: nfdi4earth
+
+
+
+
+output_dir: "experiment/local_running/nfdi4earth_meta-llama-3_1-8b-instruct_graphConstraints"
+
+
+#################################################################################
+question: 
+
+# Include every non-empty prompt hint block for every schema mode.
+include_all_prompt_hints: true # added specifically for the api to ensure that all prompt hints are included in the final prompt, regardless of the schema mode.
+# while running experiments, this should be set to false to avoid including unnecessary prompt hints.
+# while runing the API, this should be set to true to ensure that all prompt hints are included in the final prompt, regardless of the schema mode.
+
+evaluation:
+  enabled: true
+
+#New schema configuration
+schema:
+  mode: small  # Options: "full", "small", "rag", "ner", "schema_path", "reasoning_path", "lexicon", "none"
+  full_schema_path: 
+  small_schema_pathh:
+  # lexicon_schema_path: "helper/hydroOntology/reduced_lexicons.json"
+  # ontology_path: "helper/hydroOntology/ontology.owl.ttl"  # Source for RAG
+  vector_store:
+    index_path: "helper/hydroOntology/ontology.index"
+    chunks_path: "helper/hydroOntology/ontology_chunks.pkl"
+    embedding_model: "all-MiniLM-L6-v2"
+    rag_top_k: 5  # Number of chunks to retrieve in RAG mode
+
+ner:
+  system_prompt: |
+    You are an ontology-aware information extraction assistant.
+    Extract only the ontology-relevant entities, properties, relationships, and intent from the question.
+    Return only valid JSON with no explanation or markdown.
+   
+  user_prompt_template: |
+    Extract entities, properties and relationships from the following question.
+    Provide the answer as structured data. and map them to the ontology schema if possible {schema} .
+    
+    Question ID: {question_id}
+    Question: {question}
+    Return ONLY valid JSON using this schema:
+    {
+    "question_id": "<question id or null>",
+    "entities": [
+        {"name": "...", "type": "Class|Entity|Concept", "class_uri": "..." }  ],
+    "properties": [
+        {"name": "...", "type": "Property|Relation|PropertySet", "property_uri": "..."}
+    ],
+    "relationships": [
+        {"subject": "...", "predicate": "...", "object": "..."}
+        ],
+    "intent": "..."
+    }
+
+schema_path:
+  lexicons_path: "helper/hydroOntology/lexicons.json"
+  fuzzy_threshold: 0.82
+  max_candidate_classes: 24
+  max_candidate_relations: 48
+  schema_path_scope: "neighborhood"  # Options: "full", "neighborhood", "candidates"
+  use_full_schema_paths: true
+  system_prompt: |
+    Your role is to find the reasoning path needed to answer the user query.
+    A reasoning path is a set of uninterrupted chains in the form head --"rel"--> tail.
+    Use only paths from the provided schema.
+    Preserve relation direction based on the meaning of the question.
+    Return only valid JSON with no explanation or markdown.
+  user_prompt_template: |
+    Your role is to find the reasoning path needed to answer the user query.
+
+    A reasoning path is a set of chains: {head --"rel"--> tail}.
+    A path should not be interrupted.
+    Everything inside quotes is a relationship.
+    All entities before the relationship are valid heads of the relationship.
+    All entities after -> are valid tails of the relationship.
+    "is_a" is a reasoning-only relationship that means the head class can be treated as the tail class.
+
+    Rules:
+    - Use only classes and relationships from SCHEMA.
+    - Preserve relationship direction exactly.
+    - Use "is_a" paths when a class needs to satisfy the domain or range of a relationship.
+    - Return the smallest path needed to answer the question.
+    - Use class ids for node classes and relationship ids or URIs for predicates.
+
+    Question ID: {question_id}
+    Question: {question}
+
+    {schema_paths}
+
+
+# Data paths
+data:
+  max_questions: -1 # Set to N to test only first N questions, -1 for all
+
+#         - If the question references a catchment by name or number, first identify the sosa:Sensor using `schema:name` or `dct:identifier`, then follow the sensor-to-catchment relation.
+
+  #        - esco:isoCountryCodeA3 is the only property that can be used to filter by country code, and it must go through the sensor.
+#        - Spatial properties are reached through the geometry node, not the entity directly.  

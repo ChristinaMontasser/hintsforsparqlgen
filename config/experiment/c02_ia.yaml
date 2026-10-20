@@ -1,0 +1,16 @@
+# defaults:
+#   - base
+
+experiment_name: c02_ia
+description: Baseline graph-hint condition using  NER, plus CoT-style instruction. Similar to the paper. 
+
+schema:
+  mode: ner
+
+use_reasoning_path_hint: false
+
+prompt_hints:
+  - general_constraints
+  - schema_general_constraints
+  - prefix_declaration
+  - CoT_instruction

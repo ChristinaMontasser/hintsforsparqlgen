@@ -1,0 +1,18 @@
+# defaults:
+#   - base
+
+experiment_name: ca_ia_ic
+description: Graph-structure hint plus CoT-style instruction and reasoning-path hint, the reasoning path prompt is set to the graph-specific configuration, which has extra hints.
+
+schema:
+  mode: reasoning_path  
+
+
+use_reasoning_path_hint: true
+
+prompt_hints:
+  - general_constraints
+  - prefix_declaration
+  - reasoning_path_general_constraints
+  - CoT_instruction
+

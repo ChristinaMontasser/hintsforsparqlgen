@@ -1,0 +1,14 @@
+
+experiment_name: ca
+description: Graph-structure hint with the full schema passed directly to generation, domain and range.
+
+schema:
+  mode: full
+
+use_reasoning_path_hint: false
+
+
+prompt_hints:
+  - general_constraints
+  - schema_general_constraints
+  - prefix_declaration

@@ -1,0 +1,15 @@
+# defaults:
+#   - base
+
+experiment_name: c01
+description: Baseline graph-hint condition using only the shared classes and property schema structure.
+
+schema:
+  mode: small
+
+use_reasoning_path_hint: false
+
+
+prompt_hints: 
+  - general_constraints
+  - schema_general_constraints

@@ -1,0 +1,10 @@
+llm: src.llm_backends.CohereBackend
+model_name: command-a-03-2025
+temperature: 0.0
+api_key: ${oc.env:COHERE_API_KEY,}
+capabilities:
+  specialized_for_sparql: False
+
+
+
+prompt: instructional

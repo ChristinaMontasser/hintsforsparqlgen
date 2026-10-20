@@ -1,0 +1,120 @@
+prefixes
+@prefix hyobs: https://w3id.org/hmontology/
+@prefix linkml: https://w3id.org/linkml/
+@prefix envthes: http://vocabs.lter-europe.net/EnvThes/
+@prefix sosa: http://www.w3.org/ns/sosa/
+@prefix rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+@prefix rdfs: http://www.w3.org/2000/01/rdf-schema#
+@prefix geo: http://www.opengis.net/ont/geosparql#
+@prefix sf: http://www.opengis.net/ont/sf#
+@prefix qudt: http://qudt.org/schema/qudt/
+@prefix unit: http://qudt.org/vocab/unit/
+@prefix xsd: http://www.w3.org/2001/XMLSchema#
+@prefix schema: http://schema.org/
+@prefix dct: http://purl.org/dc/terms/
+@prefix dbo: http://dbpedia.org/ontology/
+@prefix esco: http://data.europa.eu/esco/model#
+@prefix chebi: http://purl.obolibrary.org/obo/CHEBI_
+@prefix virtrdf: http://www.openlinksw.com/schemas/virtrdf# 
+@prefix wgs84_pos: http://www.w3.org/2003/01/geo/wgs84_pos#
+@prefix oboe: http://ecoinformatics.org/oboe/oboe.1.2/oboe-core.owl#
+class
+http://www.opengis.net/ont/sf#Polygon
+http://www.w3.org/ns/sosa/Observation
+http://vocabs.lter-europe.net/EnvThes/30212
+http://www.w3.org/ns/sosa/Sensor
+http://www.opengis.net/ont/sf#Point
+http://qudt.org/schema/qudt/QuantityValue
+properties
+http://www.opengis.net/ont/geosparql#asWKT
+https://w3id.org/hmontology/hasCarbonateSedimentaryRocksFraction
+https://w3id.org/hmontology/hasLowPrecFrequency
+http://data.europa.eu/esco/model#isoCountryCodeA3
+https://w3id.org/hmontology/hasForestAreaFraction
+https://w3id.org/hmontology/hasMaxLeafAreaIndex
+https://w3id.org/hmontology/hasMaxNDVI
+https://w3id.org/hmontology/hasMinNDVI
+https://w3id.org/hmontology/hasTotalAvailableWaterContent
+https://w3id.org/hmontology/precipitationSeasonality
+https://w3id.org/hmontology/dailyObsStartYear
+https://w3id.org/hmontology/hasDominantLandUse
+https://w3id.org/hmontology/hasMaxGreenVegetationFraction
+https://w3id.org/hmontology/hasMeanEvapotranspiration
+https://w3id.org/hmontology/hasPyroclasticsFraction
+https://w3id.org/hmontology/hasRangeGreenVegetationFraction
+https://w3id.org/hmontology/hasRangeLeafAreaIndex
+https://w3id.org/hmontology/hasRootdepth
+https://w3id.org/hmontology/hasSaturatedHydraulicConductivity
+https://w3id.org/hmontology/hasSiltFraction
+https://w3id.org/hmontology/has_mvert_dist
+https://w3id.org/hmontology/medianElevation
+https://w3id.org/hmontology/hasDominantGeologicalClass
+https://w3id.org/hmontology/hasLowPrecipitationSeason
+https://w3id.org/hmontology/hasSoilPorosity
+http://schema.org/addressRegion
+http://www.opengis.net/ont/geosparql#hasGeometry
+http://www.w3.org/ns/sosa/hasFeatureOfInterest
+http://www.w3.org/ns/sosa/madeBySensor
+https://w3id.org/hmontology/hasIceAndGlacierFraction
+https://w3id.org/hmontology/hasOrganicFraction
+http://www.w3.org/2003/01/geo/wgs84_pos#alt
+https://w3id.org/hmontology/hasRiverBasedRegion
+http://qudt.org/schema/qudt/numericValue
+http://www.w3.org/ns/sosa/resultTime
+https://w3id.org/hmontology/hasAridityIndex
+https://w3id.org/hmontology/hasHighPrecipitationDuration
+https://w3id.org/hmontology/hasReferenceEvapotranspiration
+https://w3id.org/hmontology/has_mvert_ang
+https://w3id.org/hmontology/hasCatchmentArea
+http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+https://w3id.org/hmontology/elevationRange
+https://w3id.org/hmontology/hasBasicPlutonicRocksFraction
+https://w3id.org/hmontology/hasClayFraction
+https://w3id.org/hmontology/hasMeanDailyPrecip
+https://w3id.org/hmontology/hasReciprocalAridityIndex
+https://w3id.org/hmontology/eu_Hydro_ID
+https://w3id.org/hmontology/gaps_pre
+https://w3id.org/hmontology/obsEndYear
+http://www.w3.org/ns/sosa/observedProperty
+https://w3id.org/hmontology/hasAcidPlutonicRocksFraction
+https://w3id.org/hmontology/hasAcidVolcanicRocksFraction
+https://w3id.org/hmontology/hasBasicVolcanicRocksFraction
+https://w3id.org/hmontology/hasHighPrecipitationSeason
+https://w3id.org/hmontology/hasLakeAreaFraction
+https://w3id.org/hmontology/hasSubsurfacePermeabilityFraction
+https://w3id.org/hmontology/hasUnconsolidatedSedimentsFraction
+https://w3id.org/hmontology/hasUrbanAreaFraction
+https://w3id.org/hmontology/hasWaterBodiesFraction
+https://w3id.org/hmontology/monitorsCatchment
+https://w3id.org/hmontology/standardDeviationElevation
+http://dbpedia.org/ontology/river
+https://w3id.org/hmontology/area_ratio
+https://w3id.org/hmontology/crs
+https://w3id.org/hmontology/catchment_area_calculated
+https://w3id.org/hmontology/hasAgriculturalAreaFraction
+https://w3id.org/hmontology/hasDepthtoBedrock
+https://w3id.org/hmontology/hasHighPrecFrequency
+https://w3id.org/hmontology/hasMixedSedimentaryRocksFraction
+https://w3id.org/hmontology/hasSnowFraction
+https://w3id.org/hmontology/hasSubsurfacePorosityFraction
+https://w3id.org/hmontology/has_Strm_density
+https://w3id.org/hmontology/meanElevation
+https://w3id.org/hmontology/meanSlope
+https://w3id.org/hmontology/gaps_post
+https://w3id.org/hmontology/hyriv_ID
+http://www.w3.org/ns/sosa/memberOf
+http://qudt.org/schema/qudt/unit
+https://w3id.org/hmontology/elon_ratio
+https://w3id.org/hmontology/hasBareAreaFraction
+https://w3id.org/hmontology/hasGlacierAreaFraction
+https://w3id.org/hmontology/hasLowPrecipitationDuration
+https://w3id.org/hmontology/hasSandFraction
+https://w3id.org/hmontology/hasSiliciclasticSedimentaryRocksFraction
+http://schema.org/name
+https://w3id.org/hmontology/hourlyObsStartYear
+http://www.w3.org/ns/sosa/hasSimpleResult
+http://www.w3.org/ns/sosa/hasResult
+http://purl.org/dc/terms/identifier
+https://w3id.org/hmontology/hasIntermediatePlutonicRocksFraction
+https://w3id.org/hmontology/hasMetamorphitesFraction
+https://w3id.org/hmontology/govnrID

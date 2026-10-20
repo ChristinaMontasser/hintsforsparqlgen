@@ -1,0 +1,15 @@
+defaults:
+  - override /reasoning_path_prompt@_global_: lamah_ce
+
+graph:
+  name: lamah_ce
+  graph_uri: hydroturtle/lamah_ce
+  validator_api: https://obs.knowledgehub.nfdi4earth.de/sparql/
+
+  questions_path: "helper/hydroOntology/question_set/20260727_question_set/27_07_2026_questions_queries_lamah_ce.csv"
+
+  full_schema_path: "helper/hydroOntology/experiments_schema_files/20260721_1634_lamah_ce_predicate_schema_full.txt" 
+  small_schema_path: "helper/hydroOntology/experiments_schema_files/20260721_1634_lamah_ce_predicate_schema_classes_properties.txt"
+  lexicon_schema_path:
+  ontology_path:
+  schema_paths_path: "helper/hydroOntology/experiments_schema_files/20260721_1634_lamah_ce_predicate_schema_full.txt" 

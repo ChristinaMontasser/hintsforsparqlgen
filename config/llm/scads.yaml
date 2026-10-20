@@ -1,0 +1,6 @@
+llm: src.llm_backends.SCADSBackend
+model_name: openai/gpt-oss-120b
+base_url: https://llm.scads.ai/v1
+api_key: ${oc.env:SCADS_API_KEY,}
+temperature: 0.0
+max_tokens: 1000
