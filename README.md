@@ -274,3 +274,14 @@ python helper/hydroOntology/schema_profiling/run_schema_profiling.py --graph <gr
 ```
 
 After the pipeline finishes, update the graph configuration with the generated schema paths before running an experiment.
+
+# Contact
+
+- [Auriol Degbelo](https://sites.google.com/site/aurioldegbelo)
+
+- Christina Naguib
+
+
+# Acknowledgments
+
+The work has been funded by the German Research Foundation through the Project [NFDI4Earth](https://www.nfdi4earth.de/). 
